@@ -55,7 +55,7 @@
               </tr>
               <tr class="d-flex">
                 <td class="col-md-3 col-sm-4 col-xs-3 text-left text-muted">Connected</td>
-                <td class="col-md-9 col-sm-8 col-xs-9 text-left">{{ $parent.serverData.server.clientCount }} {{ $parent.serverData.server.clientCount > 1 ? 'clients' : 'client'}}</td>
+                <td class="col-md-9 col-sm-8 col-xs-9 text-left">{{ $parent.serverData.server.clientCount }} client {{ $parent.serverData.server.clientCount > 1 ? 'instances' : 'instance'}}</td>
               </tr>
               <tr class="d-flex">
                 <td class="col-md-3 col-sm-4 col-xs-3 text-left text-muted">Server IP(s)</td>

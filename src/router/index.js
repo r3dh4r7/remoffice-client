@@ -14,6 +14,7 @@ import Switches from '../views/Switches'
 import Storage from '../views/Storage'
 import Surveillance from '../views/Surveillance'
 import Server from '../views/Server'
+import Error404 from '../views/Error/404'
 
 Vue.use(Router)
 NProgress.configure({ showSpinner: false, trickleRate: 0.02, trickleSpeed: 200 })
@@ -41,6 +42,10 @@ const requireAuth = (to, from, next) => {
 const router = new Router({
   routes: [
     {
+      path: '*',
+      component: Error404
+    },
+    {
       path: '/',
       component: MainLayout,
       children: [
@@ -54,46 +59,46 @@ const router = new Router({
           name: 'loginView',
           component: Login,
           beforeEnter: requireNoAuth
-        }
-      ]
-    },
-    {
-      path: '/app',
-      component: AppLayout,
-      children: [
-        {
-          path: '',
-          redirect: 'dashboard'
         },
         {
-          path: 'dashboard',
-          name: 'dashboardView',
-          component: Dashboard,
-          beforeEnter: requireAuth
-        },
-        {
-          path: 'switches',
-          name: 'switchesView',
-          component: Switches,
-          beforeEnter: requireAuth
-        },
-        {
-          path: 'storage',
-          name: 'storageView',
-          component: Storage,
-          beforeEnter: requireAuth
-        },
-        {
-          path: 'surveillance',
-          name: 'surveillanceView',
-          component: Surveillance,
-          beforeEnter: requireAuth
-        },
-        {
-          path: 'server',
-          name: 'serverView',
-          component: Server,
-          beforeEnter: requireAuth
+          path: 'app',
+          component: AppLayout,
+          children: [
+            {
+              path: '',
+              redirect: 'dashboard'
+            },
+            {
+              path: 'dashboard',
+              name: 'dashboardView',
+              component: Dashboard,
+              beforeEnter: requireAuth
+            },
+            {
+              path: 'switches',
+              name: 'switchesView',
+              component: Switches,
+              beforeEnter: requireAuth
+            },
+            {
+              path: 'storage',
+              name: 'storageView',
+              component: Storage,
+              beforeEnter: requireAuth
+            },
+            {
+              path: 'surveillance',
+              name: 'surveillanceView',
+              component: Surveillance,
+              beforeEnter: requireAuth
+            },
+            {
+              path: 'server',
+              name: 'serverView',
+              component: Server,
+              beforeEnter: requireAuth
+            }
+          ]
         }
       ]
     }

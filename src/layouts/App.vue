@@ -31,11 +31,11 @@
                   <ul class="notif-list">
                     <li v-for="(n, index) in notifications.slice().reverse()" v-bind:key="index">
                       <div class="ml-5 mr-5">
-                        <span :class="'avatar float-left mr-2 text-' + n.type">
+                        <span :class="'avatar float-left mr-2 text-' + typeSubstitute(n.type)">
                           <i v-if="n.type === 'success'" class="fa fa-check-circle"></i>
                           <i v-if="n.type === 'info'" class="fa fa-info-circle"></i>
                           <i v-if="n.type === 'warning'" class="fa fa-info-circle"></i>
-                          <i v-if="n.type === 'danger'" class="fa fa-exclamation-circle"></i>
+                          <i v-if="n.type === 'error'" class="fa fa-exclamation-circle"></i>
                         </span>
                         <div v-html="n.text"></div>
                         <div><span class="small text-muted">{{ n.title }} - {{ notifTime(n.time) }}</span></div>
@@ -93,13 +93,13 @@
                   <router-link to="dashboard" class="nav-link"><i class="mr-2 fa fa-home"></i> Dashboard</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="switches" class="nav-link"><i class="mr-2 fa fa-power-off"></i> Switches</router-link>
+                  <router-link to="switches" class="nav-link"><i class="mr-2 fa fa-toggle-on"></i> Switches</router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="surveillance" class="nav-link"><i class="mr-2 fa fa-camera"></i> Surveillance</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="storage" class="nav-link"><i class="mr-2 fa fa-folder"></i> Storage</router-link>
+                  <router-link to="storage" class="nav-link"><i class="mr-2 fa fa-folder-open"></i> Storage</router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="server" class="nav-link"><i class="mr-2 fa fa-server"></i> Server</router-link>
@@ -126,16 +126,9 @@
 <script>
 import ioClient from 'socket.io-client'
 import appConfig from '../config'
-import '../../node_modules/animate.css/animate.min.css'
-import '../../node_modules/toastr/build/toastr.min.css'
-import '../../node_modules/nprogress/nprogress.css'
-import '../../node_modules/feathericon/build/css/feathericon.css'
-import '../../node_modules/@icon/font-awesome/font-awesome.css'
-import '../assets/css/dashboard.css'
 const $ = require('jquery')
 window.$ = $
 window.jQuery = window.$
-require('bootstrap')
 
 export default {
   name: 'AppLayout',
@@ -168,6 +161,20 @@ export default {
     }
   },
   methods: {
+    typeSubstitute (type) {
+      switch (type) {
+        case 'success':
+          return 'success'
+        case 'info':
+          return 'primary'
+        case 'warning':
+          return 'warning'
+        case 'error':
+          return 'danger'
+        default:
+          return 'default'
+      }
+    },
     user (field) {
       if (field === 'privilegeName') {
         switch (JSON.parse(localStorage.getItem(appConfig.name + '_' + 'user'))['privilege']) {
@@ -188,9 +195,11 @@ export default {
     },
     notify (notif) {
       notif.time = new Date()
-      // this.showNotification(notif.title, notif.text, notif.type, notif.duration, notif.delay, false, true)
+      this.showNotification(notif.title, notif.text, notif.type, notif.duration, notif.delay, false, true)
       notif.text = notif.text.replace('ON', '<span class="text-success">ON</span>')
       notif.text = notif.text.replace('OFF', '<span class="text-danger">OFF</span>')
+      notif.text = notif.text.replace('Connected', '<span class="text-success">Connected</span>')
+      notif.text = notif.text.replace('Disconnected', '<span class="text-danger">Disconnected</span>')
       this.notifications.push(notif)
       this.unreadNotifications++
     },

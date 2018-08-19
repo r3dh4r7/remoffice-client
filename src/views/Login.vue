@@ -11,7 +11,7 @@
               <div class="card-body p-6">
                 <div class="card-title">Login</div>
                 <div class="form-group">
-                  <label class="form-label"><i class="fa fa-passport mr-3"></i> E-mail</label>
+                  <label class="form-label"><i class="fa fa-at mr-2"></i> E-mail</label>
                   <input type="email" class="form-control" id="Email" aria-describedby="usernameHelp" placeholder="Enter e-mail" v-model="fields.email">
                 </div>
                 <div class="form-group">
@@ -88,12 +88,12 @@ export default {
             }, 3000)
           } else {
             localStorage.removeItem(vm.tokenVar)
-            vm.showNotificationAlt('Error', response.data.message, 'error', 3000)
+            vm.showNotificationAlt('Authentication Error', response.data.message, 'error', 3000)
           }
         })
         .catch(function () {
           localStorage.removeItem(vm.tokenVar)
-          vm.showNotificationAlt('Error', 'Server unreachable.', 'error', 3000)
+          vm.showNotificationAlt('Connection Error', 'Server unreachable.', 'error', 3000)
         })
     }
   },

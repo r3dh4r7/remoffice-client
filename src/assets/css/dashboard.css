@@ -9705,11 +9705,11 @@ a.text-secondary:hover, a.text-secondary:focus {
 }
 
 .text-success {
-  color: #5eba00 !important;
+  color: #448700 !important;
 }
 
 a.text-success:hover, a.text-success:focus {
-  color: #448700 !important;
+  color: #5eba00 !important;
 }
 
 .text-info {
@@ -15551,4 +15551,9 @@ a.tag-addon:hover {
   background-image: url('/static/img/animated/no-signal.gif');
   background-position: center;
   background-size: cover;
+}
+
+
+.error p {
+  line-height: 1.6rem;
 }
