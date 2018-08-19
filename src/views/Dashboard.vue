@@ -12,9 +12,6 @@
 
 <script>
 export default {
-  name: 'Dashboard',
-  mounted () {
-    console.log('In dash')
-  }
+  name: 'Dashboard'
 }
 </script>

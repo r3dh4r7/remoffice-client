@@ -11,7 +11,7 @@
               <div class="card-body p-6">
                 <div class="card-title">Login</div>
                 <div class="form-group">
-                  <label class="form-label"><i class="fa fa-user mr-3"></i> E-mail</label>
+                  <label class="form-label"><i class="fa fa-passport mr-3"></i> E-mail</label>
                   <input type="email" class="form-control" id="Email" aria-describedby="usernameHelp" placeholder="Enter e-mail" v-model="fields.email">
                 </div>
                 <div class="form-group">
@@ -32,7 +32,7 @@
                 <a href="/"><i class="fa fa-arrow-left"></i> Home</a>
               </div>
               <div class="col-6 text-right text-muted">
-                <a href="#" @click.prevent="eraseCredentials">Erase credentials <i class="fa fa-times"></i></a>
+                <a href="#" @click.prevent="forgetServer">Forget Server <i class="fa fa-times"></i></a>
               </div>
             </div>
           </div>
@@ -50,8 +50,9 @@ export default {
   name: 'Login',
   data () {
     return {
-      saveVar: appConfig.name + '_' + 'server',
+      serverVar: appConfig.name + '_' + 'server',
       tokenVar: appConfig.name + '_' + 'token',
+      userVar: appConfig.name + '_' + 'user',
       fields: {
         email: '',
         password: '',
@@ -61,10 +62,10 @@ export default {
     }
   },
   methods: {
-    eraseCredentials () {
-      localStorage.removeItem(this.saveVar)
+    forgetServer () {
+      localStorage.removeItem(this.serverVar)
       this.fields.server = 'localhost'
-      this.showNotificationAlt('Credentials Erased', '', 'info', 2000)
+      this.showNotificationAlt('Server Config Erased', '', 'info', 2000)
     },
 
     login () {
@@ -73,12 +74,14 @@ export default {
         ? window.location.origin + '/auth'
         : window.location.protocol + '//' + vm.fields.server + '/auth'
 
-      localStorage.setItem(this.saveVar, vm.fields.server)
+      localStorage.setItem(this.serverVar, vm.fields.server)
 
       axios.post(api, {email: vm.fields.email, password: vm.fields.password})
         .then(function (response) {
           if (!response.data.error) {
             localStorage.setItem(vm.tokenVar, response.data.token)
+            localStorage.setItem(vm.userVar, JSON.stringify(response.data.user))
+            vm.clearNotifications()
             vm.showNotificationAlt('Login Successful', response.data.message, 'success', 3000)
             setTimeout(() => {
               vm.$router.push({path: 'app'})
@@ -95,10 +98,16 @@ export default {
     }
   },
   mounted () {
-    const savedServer = localStorage.getItem(this.saveVar)
+    const savedServer = localStorage.getItem(this.serverVar)
 
     if (savedServer) {
       this.fields.server = savedServer
+    }
+
+    if (this.$route.params.notification) {
+      this.showNotificationAlt(this.$route.params.notification.title,
+        this.$route.params.notification.text,
+        this.$route.params.notification.type)
     }
   }
 }
