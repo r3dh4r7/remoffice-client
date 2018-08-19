@@ -88,7 +88,7 @@ export default {
   computed: {
     blackboxImage () {
       let url = 'http://'
-      url += appConfig.server.host + ':' + appConfig.server.port
+      url += localStorage.getItem(appConfig.name + '_' + 'server')
       url += '/server-assets/blackbox/images/index.png'
       return url
     }

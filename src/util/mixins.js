@@ -5,23 +5,6 @@ const timeAgo = new TimeAgo('en-US')
 const $ = require('jquery')
 const toastr = require('toastr')
 
-const toastrOptions = {
-  'closeButton': true,
-  'debug': false,
-  'newestOnTop': true,
-  'progressBar': true,
-  'positionClass': 'toast-top-center',
-  'preventDuplicates': true,
-  'showDuration': '1000',
-  'hideDuration': '1000',
-  'timeOut': '5000',
-  'extendedTimeOut': '0',
-  'showEasing': 'swing',
-  'hideEasing': 'linear',
-  'showMethod': 'slideDown',
-  'hideMethod': 'slideUp'
-}
-
 const mixins = {
   textEllipsis (str, maxLength, { side = 'end', ellipsis = '...' } = {}) {
     if (str.length > maxLength) {
@@ -60,7 +43,50 @@ const mixins = {
     }
 
     setTimeout(function () {
-      toastr.options = toastrOptions
+      toastr.options = {
+        'closeButton': true,
+        'debug': false,
+        'newestOnTop': true,
+        'progressBar': true,
+        'positionClass': 'toast-top-center',
+        'preventDuplicates': true,
+        'showDuration': '1000',
+        'hideDuration': '1000',
+        'timeOut': '5000',
+        'extendedTimeOut': '0',
+        'showEasing': 'swing',
+        'hideEasing': 'linear',
+        'showMethod': 'slideDown',
+        'hideMethod': 'slideUp'
+      }
+      // eslint-disable-next-line
+      toastr[type](text, title, {timeOut: duration, progressBar: showProgressBar})
+    }, delay)
+  },
+
+  showNotificationAlt (title, text, type, duration = 0, delay = 0, showProgressBar = false, cleanUpFirst = false) {
+    if (cleanUpFirst) {
+      // eslint-disable-next-line
+      toastr.remove()
+    }
+
+    setTimeout(function () {
+      toastr.options = {
+        'closeButton': true,
+        'debug': false,
+        'newestOnTop': true,
+        'progressBar': true,
+        'positionClass': 'toast-bottom-center',
+        'preventDuplicates': true,
+        'showDuration': '1000',
+        'hideDuration': '1000',
+        'timeOut': '5000',
+        'extendedTimeOut': '0',
+        'showEasing': 'swing',
+        'hideEasing': 'linear',
+        'showMethod': 'slideDown',
+        'hideMethod': 'slideUp'
+      }
       // eslint-disable-next-line
       toastr[type](text, title, {timeOut: duration, progressBar: showProgressBar})
     }, delay)

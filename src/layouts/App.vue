@@ -5,17 +5,22 @@
         <div class="container">
           <div class="d-flex">
             <a class="header-brand" href="./index.html">
-              <img src="static/img/logo/main.png" class="header-brand-img" alt="tabler logo">
+              <img src="static/img/logo/main.png" class="header-brand-img" alt="Remoffice">
             </a>
             <div class="d-flex order-lg-2 ml-auto">
               <div class="dropdown">
-                <a class="nav-link pr-0 leading-none">
+                <a class="nav-link pr-0 leading-none" data-toggle="dropdown">
                   <span class="avatar avatar-img"></span>
                   <span class="ml-2 mr-5 d-none d-sm-block">
                     <span class="text-primary">Remote User</span>
                     <small class="text-muted d-block mt-1">Administrator</small>
                   </span>
                 </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                  <a class="dropdown-item" href="#" @click.prevent="logout">
+                    <i class="dropdown-icon fa fa-power-off"></i> Sign Out
+                  </a>
+                </div>
               </div>
               <div class="dropdown d-none d-md-flex">
                 <a class="nav-link icon" data-toggle="dropdown">
@@ -56,7 +61,7 @@
                   </p>
                   <p class="px-5 my-2 text-nowrap"><span class="text-default">{{ serverData.server.name }}</span> <span class="text-muted">{{ serverData.server.version }}</span></p>
                   <p class="px-5 my-2 text-nowrap"><span class="text-default">{{ serverData.blackbox.metadata['Name'] }}</span> <span class="text-muted">{{ serverData.blackbox.metadata['Model'] }}</span></p>
-                  <p class="px-5 my-2 text-nowrap"><span class="text-primary">{{ $socket.io.uri }}</span></p>
+                  <p class="px-5 my-2 text-nowrap"><span class="text-primary">{{ socket.io.uri }}</span></p>
                 </div>
               </div>
             </div>
@@ -119,13 +124,13 @@
 </template>
 
 <script>
+import ioClient from 'socket.io-client'
 import appConfig from '../config'
 import '../../node_modules/animate.css/animate.min.css'
 import '../../node_modules/toastr/build/toastr.min.css'
 import '../../node_modules/nprogress/nprogress.css'
 import '../../node_modules/feathericon/build/css/feathericon.css'
 import '../../node_modules/@icon/font-awesome/font-awesome.css'
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../assets/css/dashboard.css'
 const $ = require('jquery')
 window.$ = $
@@ -137,6 +142,11 @@ export default {
   data () {
     return {
       appConfig: appConfig,
+      socket: {
+        io: {
+          uri: 'unavailable'
+        }
+      },
       notifications: [],
       serverData: {
         blackbox: {
@@ -157,6 +167,10 @@ export default {
     }
   },
   methods: {
+    logout () {
+      localStorage.removeItem(appConfig.name + '_' + 'token')
+      this.$router.push({name: 'homeView'})
+    },
     notifTime (dateObj) {
       return this.timeAgo(dateObj)
     },
@@ -170,40 +184,58 @@ export default {
       { state: 0 }
     },
     switchToggle (e) {
-      this.$socket.emit('toggleSwitch', this.switches[e.target.id])
+      this.socket.emit('toggleSwitch', this.switches[e.target.id])
     },
     masterSwitchToggle (name) {
-      this.$socket.emit('toggleMasterSwitch', this.masterSwitches[name])
+      this.socket.emit('toggleMasterSwitch', this.masterSwitches[name])
     },
 
     // reboot blackbox in `delay` seconds
     rebootBlackbox (delay) {
-      this.$socket.emit('rebootBlackbox', delay)
+      this.socket.emit('rebootBlackbox', delay)
     },
 
     // shutdown blackbox in `delay` seconds
     shutdownBlackbox (delay) {
-      this.$socket.emit('shutdownBlackbox', delay)
+      this.socket.emit('shutdownBlackbox', delay)
     }
   },
-  sockets: {
-    notification: function (notif) {
-      this.notify(notif)
-    },
-    connect: function () {
-      // do nothing for now
-    },
-    disconnect: function () {
-      this.serverData.blackbox.status = 'disconnected'
-      this.cams = []
-      this.rooms = []
-      this.switches = []
-      this.masterSwitches = []
-    },
-    serverData: function (data) {
-      this.serverData = data
-    },
-    cams: function (data) {
+  mounted () {
+    const vm = this
+    this.server = localStorage.getItem(appConfig.name + '_' + 'server')
+
+    $('#headerMenuCollapse .nav-link').on('click', function () {
+      $('#headerMenuCollapse').collapse('hide')
+    })
+
+    this.socket = this.server === 'localhost' ? ioClient() : ioClient(this.server)
+
+    this.socket.on('notification', function (notif) {
+      vm.notify(notif)
+    })
+
+    this.socket.on('connect', function () {
+      vm.socket.emit('authentication', {token: localStorage.getItem(appConfig.name + '_' + 'token')})
+    })
+
+    this.socket.on('unauthorized', function (msg) {
+      localStorage.removeItem(appConfig.name + '_' + 'token')
+      vm.$router.push({name: 'loginView', params: {msg: msg}})
+    })
+
+    this.socket.on('disconnect', function () {
+      vm.serverData.blackbox.status = 'disconnected'
+      vm.cams = []
+      vm.rooms = []
+      vm.switches = []
+      vm.masterSwitches = []
+    })
+
+    this.socket.on('serverData', function (data) {
+      vm.serverData = data
+    })
+
+    this.socket.on('cams', function (data) {
       let c = {}
 
       for (let i = 0; i < data.length; i++) {
@@ -211,51 +243,46 @@ export default {
         c[data[i].id].isActive = false
       }
 
-      this.cams = c
-    },
-    rooms: function (data) {
+      vm.cams = c
+    })
+
+    this.socket.on('rooms', function (data) {
       let o = {}
 
       for (let i = 0; i < data.length; i++) {
         o[data[i].id] = data[i]
       }
 
-      this.rooms = o
-    },
-    switches: function (data) {
+      vm.rooms = o
+    })
+
+    this.socket.on('switches', function (data) {
       let s = {}
 
       for (let i = 0; i < data.length; i++) {
         s[data[i].id] = data[i]
       }
 
-      this.switches = s
-    },
-    masterSwitches: function (data) {
+      vm.switches = s
+    })
+
+    this.socket.on('masterSwitches', function (data) {
       let ms = {}
 
       for (let i = 0; i < data.length; i++) {
         ms[data[i].name] = data[i]
       }
 
-      this.masterSwitches = ms
-    },
-
-    camUpdate: function (dataNode) {
-      this.cams[dataNode.id] = dataNode
-    }
-    // no use for the server side of the following yet
-    // switchUpdate: function (dataNode) {
-    //   this.switches[dataNode.id] = dataNode
-    // },
-    // masterSwitchUpdate: function (dataNode) {
-    //   this.masterSwitches[dataNode.id] = dataNode
-    // }
-  },
-  mounted () {
-    $('#headerMenuCollapse .nav-link').on('click', function () {
-      $('#headerMenuCollapse').collapse('hide')
+      vm.masterSwitches = ms
     })
+
+    this.socket.on('camUpdate', function (dataNode) {
+      vm.cams[dataNode.id] = dataNode
+    })
+  },
+
+  beforeDestroy () {
+    this.socket.disconnect()
   }
 }
 </script>

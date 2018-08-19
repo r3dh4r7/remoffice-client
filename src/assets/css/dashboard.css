@@ -3524,6 +3524,7 @@ input[type="button"].btn-block {
 
 .custom-control-label {
   margin-bottom: 0;
+  position: unset;
 }
 
 .custom-control-label::before {
