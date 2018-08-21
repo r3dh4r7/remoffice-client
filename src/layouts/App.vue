@@ -9,9 +9,9 @@
             </a>
             <div class="d-flex order-lg-2 ml-auto">
               <div class="dropdown">
-                <a class="nav-link pr-0 leading-none" data-toggle="dropdown">
+                <a class="btn-user nav-link pr-0 leading-none" data-toggle="dropdown">
                   <span class="avatar avatar-img"></span>
-                  <span class="ml-2 mr-5 d-none d-sm-block">
+                  <span class="ml-2 d-none d-sm-block">
                     <span class="text-primary">{{ user('name') }}</span>
                     <small class="text-muted d-block mt-1">{{ user('privilegeName') }}</small>
                   </span>
@@ -22,10 +22,24 @@
                   </a>
                 </div>
               </div>
-              <div class="dropdown d-none d-md-flex">
-                <a @click="unreadNotifications = 0" class="nav-link icon" data-toggle="dropdown">
+            </div>
+            <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
+              <span class="header-toggler-icon"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-2 text-right ml-auto">
+              <router-link to="guide" class="btn-sm btn-muted btn-rounded">
+                <i class="fa fa-question"></i>
+              </router-link>
+              <div class="dropdown">
+                <a @click="unreadNotifications = 0" class="nav-link icon py-3" data-toggle="dropdown">
                   <i class="fa fa-bell"></i>
-                  <span v-if="unreadNotifications > 0" class="nav-unread"></span>
+                  <span v-if="unreadNotifications > 0" class="nav-unread animated infinite fadeOut"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                   <ul class="notif-list">
@@ -46,10 +60,10 @@
                   <a href="#" class="dropdown-item text-center text-muted-dark">Clear notifications</a>
                 </div>
               </div>
-              <div class="dropdown d-none d-md-flex">
-                <a class="nav-link icon" data-toggle="dropdown">
+              <div class="dropdown">
+                <a class="nav-link icon py-3" data-toggle="dropdown">
                   <i class="fa fa-server"></i>
-                  <span v-if="serverAvailable" class="nav-status-live"></span>
+                  <span v-if="serverAvailable" class="nav-status-live animated infinite fadeIn"></span>
                   <span v-else-if="serverData.blackbox.status === 'not-connected'" class="nav-status-default"></span>
                   <span v-else class="nav-status-off"></span>
                 </a>
@@ -63,28 +77,6 @@
                   <p class="px-5 my-2 text-nowrap"><span class="text-default">{{ serverData.blackbox.metadata['Name'] }}</span> <span class="text-muted">{{ serverData.blackbox.metadata['Model'] }}</span></p>
                   <p class="px-5 my-2 text-nowrap"><span class="text-primary">{{ socket.io.uri }}</span></p>
                 </div>
-              </div>
-            </div>
-            <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
-              <span class="header-toggler-icon"></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
-        <div class="container">
-          <div class="row align-items-center">
-            <div class="col-lg-3 ml-auto d-sm-none">
-              <div class="my-3 my-lg-0 text-center text-lg-right card-subtitle">
-                <span v-if="serverAvailable">
-                  <span class="text-success mx-1"><i class="fa fa-circle"></i></span> <span class="text-default">Connected</span>
-                </span>
-                <span v-else-if="serverData.blackbox.status === 'not-connected'">
-                  <span class="text-warning mx-1"><i class="fa fa-circle"></i></span> <span class="text-default">Not connected</span>
-                </span>
-                <span v-else>
-                  <span class="text-danger mx-1"><i class="fa fa-circle"></i></span> <span class="text-default">Disconnected</span>
-                </span>
               </div>
             </div>
             <div class="col-lg order-lg-first">
@@ -228,10 +220,6 @@ export default {
     const vm = this
     this.server = localStorage.getItem(appConfig.name + '_' + 'server')
 
-    $('#headerMenuCollapse .nav-link').on('click', function () {
-      $('#headerMenuCollapse').collapse('hide')
-    })
-
     // establish connection to server
     this.socket = this.server === 'localhost' ? ioClient() : ioClient(this.server)
 
@@ -256,6 +244,22 @@ export default {
       vm.rooms = []
       vm.switches = []
       vm.masterSwitches = []
+    })
+
+    this.socket.on('updateRooms', function (data) {
+      vm.socket.emit('getRooms')
+    })
+
+    this.socket.on('updateSwitches', function (data) {
+      vm.socket.emit('getSwitches')
+    })
+
+    this.socket.on('updateMasterSwitches', function (data) {
+      vm.socket.emit('getMasterSwitches')
+    })
+
+    this.socket.on('updateCams', function (data) {
+      vm.socket.emit('getCams')
     })
 
     this.socket.on('serverData', function (data) {

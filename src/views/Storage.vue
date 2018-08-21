@@ -3,7 +3,7 @@
     <div class="container">
       <div class="page-header">
         <h1 class="page-title ml-5">
-          Central Storage
+          Blackbox Storage
         </h1>
       </div>
     </div>
@@ -61,10 +61,10 @@ export default {
       }
     },
     storageEnabled () {
-      if (typeof this.$parent.masterSwitches.storageServer === 'undefined') {
+      if (typeof this.$parent.masterSwitches.blackboxStorage === 'undefined') {
         return false
       }
-      return !!this.$parent.masterSwitches.storageServer.state
+      return !!this.$parent.masterSwitches.blackboxStorage.state
     },
     storagePortAvailable () {
       return !!this.$parent.serverAvailable && this.storagePort

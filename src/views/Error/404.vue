@@ -9,9 +9,9 @@
             <p class="h4 text-muted font-weight-normal mb-7">{{ appConfig.name }} encountered a route error. If you believe you came to the right place, please report this to the administrator, otherwise just return to the previous page and be awesome!</p>
           </div>
         </div>
-        <a class="btn btn-primary" href="javascript:history.back()">
-          <i class="fa fa-arrow-left mr-2"></i>Go back
-        </a>
+        <router-link class="btn btn-primary" to="/">
+          <i class="fa fa-home mr-2"></i> Home
+        </router-link>
       </div>
     </div>
   </div>

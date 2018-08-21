@@ -14,6 +14,7 @@ import Switches from '../views/Switches'
 import Storage from '../views/Storage'
 import Surveillance from '../views/Surveillance'
 import Server from '../views/Server'
+import Guide from '../views/Guide'
 import Error404 from '../views/Error/404'
 
 Vue.use(Router)
@@ -96,6 +97,12 @@ const router = new Router({
               path: 'server',
               name: 'serverView',
               component: Server,
+              beforeEnter: requireAuth
+            },
+            {
+              path: 'guide',
+              name: 'guideView',
+              component: Guide,
               beforeEnter: requireAuth
             }
           ]

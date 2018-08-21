@@ -12862,6 +12862,29 @@ a.icon:hover {
   border-color: #495057;
 }
 
+.btn-rounded {
+  border-radius: 50%;
+}
+
+.btn-muted {
+  background-color: #9aa0ac;
+  color: #fff;
+}
+
+.btn-muted:hover {
+  background-color: #6e6e70;
+  color: #fff;
+}
+
+.btn-muted.active {
+  background-color: #467fcf;
+}
+
+.btn-muted.active:hover {
+  background-color: #6e6e70;
+  color: #fff;
+}
+
 .alert {
   font-size: 0.9375rem;
 }
@@ -13354,7 +13377,7 @@ Card options
 }
 
 .card-fullscreen .card-options-fullscreen i:before {
-  content: '\f2d3';
+  content: '\f2d2';
 }
 
 .card-fullscreen .card-options-remove {
@@ -13597,7 +13620,7 @@ Card alert
 }
 
 .list-group-transparent .list-group-item.active {
-  background: rgba(70, 127, 207, 0.06);
+  /* background: rgba(70, 127, 207, 0.06); */
   font-weight: 600;
 }
 
