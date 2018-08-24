@@ -81,8 +81,6 @@
 </template>
 
 <script>
-import appConfig from '../config'
-
 export default {
   name: 'Server',
   computed: {

@@ -55,7 +55,7 @@ export default {
     },
     storageUrl () {
       if (this.storageEnabled && this.storagePortAvailable) {
-        return 'http://' + localStorage.getItem(appConfig.name + '_' + 'server').split(':')[0] + ':' + this.storagePort
+        return 'http://' + window.location.host.split(':')[0] + ':' + this.storagePort
       } else {
         return ''
       }
