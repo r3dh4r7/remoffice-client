@@ -34,7 +34,7 @@
                 <thead>
                   <tr>
                     <th class="text">Infrastructure</th>
-                    <th class="w-1">ID.</th>
+                    <th class="w-1">Relay ID.</th>
                     <th class="text-center">State</th>
                     <th>Room Name</th>
                     <th>Room Location</th>
