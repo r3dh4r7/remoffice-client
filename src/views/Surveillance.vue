@@ -21,6 +21,7 @@
                   <i class="fe fe-camera icon-1halfx mr-1"></i>
                 </a> Cam {{ c.id }}</h3>
               <div class="card-options">
+                <a v-if="c.isActive" target="_blank" :href="c.url" class=""><i class="fa fa-external-link-square-alt"></i></a>
                 <a class="card-options-collapse" data-toggle="card-collapse"><i @click.prevent="mutateCard" class="fa fa-chevron-up"></i></a>
                 <a class="card-options-fullscreen" data-toggle="card-fullscreen"><i @click.prevent="mutateCard" class="fa fa-window-maximize"></i></a>
               </div>
