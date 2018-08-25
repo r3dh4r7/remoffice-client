@@ -33,8 +33,8 @@
               <table class="table card-table table-vcenter text-nowrap">
                 <thead>
                   <tr>
+                    <th class="text-center">Relay ID.</th>
                     <th class="text">Infrastructure</th>
-                    <th class="w-1">Relay ID.</th>
                     <th class="text-center">State</th>
                     <th>Room Name</th>
                     <th>Room Location</th>
@@ -42,8 +42,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="s in $parent.switches" :key="s.id">
+                      <td class="text-center"><span class="text-muted">{{ s.id }}</span></td>
                       <td><span :class="'mr-5 ' + s.icon"></span> {{ s.description }}</td>
-                      <td><span class="text-muted">{{ s.id }}</span></td>
                       <td class="text-center">
                         <div class="form-group mb-0">
                           <label class="custom-switch">
