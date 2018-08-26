@@ -45,6 +45,7 @@ export default {
   data () {
     return {
       appConfig: appConfig,
+      serverVar: appConfig.name + '_' + 'server',
       hasHistory: false
     }
   },
@@ -55,7 +56,11 @@ export default {
     },
     storageUrl () {
       if (this.storageEnabled && this.storagePortAvailable) {
-        return 'http://' + window.location.host.split(':')[0] + ':' + this.storagePort
+        if (this.isLocalAddress(window.location.host.split(':')[0])) {
+          return 'http://' + localStorage.getItem(this.serverVar).split(':')[0] + ':' + this.storagePort
+        } else {
+          return 'http://' + window.location.host.split(':')[0] + ':' + this.storagePort
+        }
       } else {
         return ''
       }

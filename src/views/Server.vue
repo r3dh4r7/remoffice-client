@@ -81,12 +81,27 @@
 </template>
 
 <script>
+import appConfig from '../config'
+
 export default {
   name: 'Server',
+  data () {
+    return {
+      serverVar: appConfig.name + '_' + 'server'
+    }
+  },
   computed: {
     blackboxImage () {
+      let host
+
+      if (this.isLocalAddress(window.location.host.split(':')[0])) {
+        host = localStorage.getItem(this.serverVar)
+      } else {
+        host = window.location.host
+      }
+
       let url = 'http://'
-      url += window.location.host
+      url += host
       url += '/server-assets/blackbox/images/index.png'
       return url
     }

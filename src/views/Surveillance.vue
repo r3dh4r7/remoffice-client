@@ -7,7 +7,7 @@
         </h1>
       </div>
       <div v-if="$parent.serverAvailable" class="row row-cards">
-        <div v-if="!surveillanceEnabled" class="col-xl-12 text-center bg-warning">
+        <div v-if="!$parent.surveillanceEnabled" class="col-xl-12 text-center bg-warning">
           <p class="text-center text-white my-3">Surveillance disabled.</p>
         </div>
         <div v-else-if="$parent.cams.length < 1" class="col-xl-12 text-center bg-warning">
@@ -44,54 +44,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import appConfig from '../config'
-
 export default {
-  name: 'Surveillance',
-  computed: {
-    surveillanceEnabled () {
-      if (typeof this.$parent.masterSwitches.surveillance === 'undefined') {
-        return false
-      }
-      return !!this.$parent.masterSwitches.surveillance.state
-    }
-  },
-  methods: {
-    checkCams () {
-      const vm = this
-
-      for (var i = 1; i <= Object.keys(vm.$parent.cams).length; i++) {
-        let cam = vm.$parent.cams[i]
-
-        axios({
-          requestId: cam.id,
-          method: 'HEAD',
-          url: cam.url
-        })
-          .then((res) => {
-            vm.$parent.cams[res.config.requestId].isActive = true
-          })
-          .catch((err) => {
-            vm.$parent.cams[err.config.requestId].isActive = false
-          })
-      }
-    }
-  },
-  created () {
-    let vm = this
-
-    setTimeout(() => {
-      this.checkCams()
-    }, 500)
-
-    this.camPoll = setInterval(vm.checkCams, appConfig.cams.pollInterval * 1000)
-  },
-  beforeDestroy () {
-    clearInterval(this.camPoll)
-  },
-  mounted () {
-    // require('../assets/js/core.js')
-  }
+  name: 'Surveillance'
 }
 </script>

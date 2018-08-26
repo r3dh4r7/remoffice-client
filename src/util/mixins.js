@@ -6,6 +6,10 @@ const $ = require('jquery')
 const toastr = require('toastr')
 
 const mixins = {
+  isLocalAddress (host) {
+    return host === '0.0.0.0' || host === 'localhost'
+  },
+
   textEllipsis (str, maxLength, { side = 'end', ellipsis = '...' } = {}) {
     if (str.length > maxLength) {
       switch (side) {
