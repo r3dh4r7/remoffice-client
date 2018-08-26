@@ -116,7 +116,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import ioClient from 'socket.io-client'
 import appConfig from '../config'
 const $ = require('jquery')
@@ -149,36 +148,11 @@ export default {
     }
   },
   computed: {
-    surveillanceEnabled () {
-      if (typeof this.masterSwitches.surveillance === 'undefined') {
-        return false
-      }
-      return !!this.masterSwitches.surveillance.state
-    },
     serverAvailable () {
       return this.serverData.blackbox.status === 'running'
     }
   },
   methods: {
-    checkCams () {
-      const vm = this
-
-      for (var i = 1; i <= Object.keys(vm.cams).length; i++) {
-        let cam = vm.cams[i]
-
-        axios({
-          requestId: cam.id,
-          method: 'HEAD',
-          url: cam.url
-        })
-          .then((res) => {
-            vm.cams[res.config.requestId].isActive = true
-          })
-          .catch((err) => {
-            vm.cams[err.config.requestId].isActive = false
-          })
-      }
-    },
     typeSubstitute (type) {
       switch (type) {
         case 'success':
@@ -242,22 +216,8 @@ export default {
       this.socket.emit('shutdownBlackbox', delay)
     }
   },
-  created () {
-    let vm = this
-
-    setTimeout(() => {
-      this.checkCams()
-    }, 500)
-
-    this.camPoll = setInterval(vm.checkCams, appConfig.cams.pollInterval * 1000)
-  },
   mounted () {
     const vm = this
-
-    $('#headerMenuCollapse .nav-link').on('click', function () {
-      $('#headerMenuCollapse').collapse('hide')
-    })
-
     this.server = localStorage.getItem(appConfig.name + '_' + 'server')
 
     // establish connection to server
@@ -354,7 +314,6 @@ export default {
 
   beforeDestroy () {
     this.socket.disconnect()
-    clearInterval(this.camPoll)
   }
 }
 </script>

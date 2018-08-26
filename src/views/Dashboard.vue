@@ -6,7 +6,7 @@
           Dashboard
         </h1>
       </div>
-      <div class="row">
+      <div class="row mb-3">
         <div class="col-md-6">
           <div class="alert alert-primary">Need a guide? <router-link to="guide" class="alert-link">Read the User Manual</router-link>.</div>
         </div>
@@ -44,7 +44,43 @@
 </template>
 
 <script>
+import axios from 'axios'
+import appConfig from '../config'
+
 export default {
-  name: 'Dashboard'
+  name: 'Dashboard',
+  methods: {
+    checkCams () {
+      const vm = this
+
+      for (var i = 1; i <= Object.keys(vm.$parent.cams).length; i++) {
+        let cam = vm.$parent.cams[i]
+
+        axios({
+          requestId: cam.id,
+          method: 'HEAD',
+          url: cam.url
+        })
+          .then((res) => {
+            vm.$parent.cams[res.config.requestId].isActive = true
+          })
+          .catch((err) => {
+            vm.$parent.cams[err.config.requestId].isActive = false
+          })
+      }
+    }
+  },
+  created () {
+    let vm = this
+
+    setTimeout(() => {
+      this.checkCams()
+    }, 500)
+
+    this.camPoll = setInterval(vm.checkCams, appConfig.cams.pollInterval * 1000)
+  },
+  beforeDestroy () {
+    clearInterval(this.camPoll)
+  }
 }
 </script>
