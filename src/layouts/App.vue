@@ -4,7 +4,7 @@
       <div class="header py-4">
         <div class="container">
           <div class="d-flex">
-            <a class="header-brand" href="./index.html">
+            <a class="header-brand" href="/">
               <img src="static/img/logo/main.png" class="header-brand-img" alt="Remoffice">
             </a>
             <div class="d-flex order-lg-2 ml-auto">

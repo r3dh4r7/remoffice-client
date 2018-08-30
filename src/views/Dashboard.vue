@@ -20,7 +20,7 @@
               </span>
               <div>
                 <h4 class="m-0"><a href="javascript:void(0)">{{ $parent.serverData.server.clientCount }} <small>Connected Client{{ $parent.serverData.server.clientCount === 1 ? '' : 's' }}</small></a></h4>
-                <small class="text-muted">{{ !($parent.serverData.server.clientCount - 1) ? 'Just you' : $parent.serverData.server.clientCount - 1 + ' other client(s)' }}</small>
+                <small class="text-muted">{{ !($parent.serverData.server.onlineUsers - 1) ? 'Just you' : $parent.serverData.server.onlineUsers - 1 + ' other users(s)' }}</small>
               </div>
             </div>
           </div>
